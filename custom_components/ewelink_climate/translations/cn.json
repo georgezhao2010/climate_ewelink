@@ -1,0 +1,18 @@
+
+{
+    "config": {
+        "error": {
+            "cant_login": "登录失败, 请检查用户名密码"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "username": "账号",
+                    "password": "密码"
+
+                },
+                "title": "使用易微联账号添加"
+            }
+        }
+    }
+}

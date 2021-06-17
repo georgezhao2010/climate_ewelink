@@ -1,0 +1,18 @@
+
+{
+    "config": {
+        "error": {
+            "cant_login": "Can't login, check username and password"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "username": "Username",
+                    "password": "Password"
+
+                },
+                "title": "Add with eWeLink account"
+            }
+        }
+    }
+}

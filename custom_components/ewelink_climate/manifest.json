@@ -1,0 +1,9 @@
+{
+  "domain": "ewelink_climate",
+  "name": "Climate via eWeLink",
+  "config_flow": true,
+  "documentation": "",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@georgezhao2010"]
+}
