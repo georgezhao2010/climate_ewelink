@@ -13,7 +13,7 @@ from .const import (
     TEMPERATURE_MIN,
     TEMPERATURE_MAX,
     STATES_MANAGER,
-    MIDEA_DEVICES
+    CLIMATE_DEVICES
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ _LOGGER.setLevel(logging.DEBUG)
 async def async_setup_entry(hass, config_entry, async_add_entities):
     devices = []
     states_manager = hass.data[config_entry.entry_id][STATES_MANAGER]
-    for deviceid,device in hass.data[config_entry.entry_id][MIDEA_DEVICES].items():
+    for deviceid,device in hass.data[config_entry.entry_id][CLIMATE_DEVICES].items():
         dev = MideaClimate(states_manager, deviceid, device.get_status())
         devices.append(dev)
     async_add_entities(devices)

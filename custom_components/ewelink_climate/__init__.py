@@ -4,7 +4,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.core import HomeAssistant
 from .const import (
     DOMAIN,
-    MIDEA_DEVICES,
+    CLIMATE_DEVICES,
     STATES_MANAGER
 )
 
@@ -42,7 +42,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry):
         apikey = ewelink_cloud.get_apikey()
         state_manager = StateManager(hass, ws_url, devices, token, apikey)
         hass.data[config_entry.entry_id] = {}
-        hass.data[config_entry.entry_id][MIDEA_DEVICES] = devices
+        hass.data[config_entry.entry_id][CLIMATE_DEVICES] = devices
         hass.data[config_entry.entry_id][STATES_MANAGER] = state_manager
         hass.async_create_task(hass.config_entries.async_forward_entry_setup(
             config_entry, "climate"))
