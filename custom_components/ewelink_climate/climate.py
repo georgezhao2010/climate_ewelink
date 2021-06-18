@@ -122,23 +122,23 @@ class MideaClimate(ClimateEntity):
         return modes
 
     @property
-    def target_temperature_low(self) -> Optional[float]:
+    def target_temperature_low(self):
         return TEMPERATURE_MIN
 
     @property
-    def target_temperature_high(self) -> Optional[float]:
+    def target_temperature_high(self):
         return TEMPERATURE_MAX
 
     @property
-    def target_temperature_step(self) -> Optional[float]:
+    def target_temperature_step(self):
         return PRECISION_WHOLE
 
     @property
-    def target_temperature(self) -> Optional[float]:
+    def target_temperature(self):
         return self._attr_target_temperature
 
     @property
-    def current_temperature(self) -> Optional[float]:
+    def current_temperature(self):
         return self._attr_indoor_temperature
 
     @property
