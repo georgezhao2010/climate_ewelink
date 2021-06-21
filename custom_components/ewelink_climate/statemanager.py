@@ -25,6 +25,7 @@ class StateManager(threading.Thread):
         self._device_updates = {}
 
     def on_open(self):
+        _LOGGER.debug("Websocket on_open")
         ts = time.time()
         payload = {
             'action': 'userOnline',
@@ -51,17 +52,16 @@ class StateManager(threading.Thread):
                     self.send_payload(deviceid, {"_query": 1})
 
     def on_close(self):
+        _LOGGER.warning("Websocket closed, reconnect now")
+        self.run()
         pass
-
-    def send(self, data):
-        while time.time() - self._last_ts < 0.1:
-            time.sleep(0.1)
-        self._ws.send(data)
 
     def send_json(self, jsondata):
         self._ws.send(json.dumps(jsondata))
 
     def send_payload(self, deviceid, data):
+        while time.time() - self._last_ts < 0.1:
+            time.sleep(0.1)
         self._last_ts = time.time()
         sequence = str(int(self._last_ts * 1000))
         device_status =  self._devices[deviceid].get_status()
@@ -76,7 +76,6 @@ class StateManager(threading.Thread):
             'ts': 0
         } if '_query' in data else {
             'action': 'update',
-            # device apikey for shared devices
             'apikey': device_status['apikey'],
             'selfApikey': self._apikey,
             'deviceid': deviceid,
@@ -88,7 +87,9 @@ class StateManager(threading.Thread):
         self.send_json(payload)
 
     def run(self):
-        self._ws = websocket.WebSocketApp(self._url, on_open=self.on_open, on_message=self.on_message, on_close=self.on_close)
+        self._ws = websocket.WebSocketApp(self._url,
+                                          on_open=self.on_open, on_message=self.on_message,
+                                          on_close=self.on_close)
         self._ws.keep_running = True
         self._wst = threading.Thread(target = self._ws.run_forever(ping_interval=145, ping_timeout=5))
         self._wst.daemon = True

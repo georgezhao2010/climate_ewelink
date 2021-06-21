@@ -5,8 +5,7 @@ import hashlib
 import hmac
 import json
 import logging
-from aiohttp import ClientSession, WSMsgType, ClientConnectorError, \
-    WSMessage, ClientWebSocketResponse
+from aiohttp import ClientSession
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)

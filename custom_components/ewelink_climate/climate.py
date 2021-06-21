@@ -23,11 +23,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     devices = []
     states_manager = hass.data[config_entry.entry_id][STATES_MANAGER]
     for deviceid,device in hass.data[config_entry.entry_id][CLIMATE_DEVICES].items():
-        dev = MideaClimate(states_manager, deviceid, device.get_status())
+        dev = EWeLinkClimate(states_manager, deviceid, device.get_status())
         devices.append(dev)
     async_add_entities(devices)
 
-class MideaClimate(ClimateEntity):
+class EWeLinkClimate(ClimateEntity):
     def __init__(self, states_manager, deviceid:str, device_status):
         self._is_on = None
         self._device_id = deviceid
@@ -41,7 +41,8 @@ class MideaClimate(ClimateEntity):
         self._attr_outdoor_temperature = None
         self._attr_target_temperature = None
         self._attr_swing_mode = None
-        self._device_status_info = device_status
+        if "params" in device_status:
+            self.update_data(device_status["params"])
         manufacturer = "Unknow"
         model = "Unknow"
         if "extra" in device_status and "extra" in device_status["extra"] and "manufacturer" in device_status["extra"]["extra"]:
@@ -52,7 +53,7 @@ class MideaClimate(ClimateEntity):
             "manufacturer":  manufacturer,
             "model": model,
             "identifiers": {(DOMAIN, self._device_id)},
-            "name": f"Climate {self._device_id}"
+            "name": f"Climate {self._device_id}",
         }
 
     @property
@@ -69,14 +70,7 @@ class MideaClimate(ClimateEntity):
 
     @property
     def supported_features(self):
-        support = 0
-        if "temperature" in self._device_status_info["params"]:
-            support = SUPPORT_TARGET_TEMPERATURE
-        if "wind_speed" in self._device_status_info["params"]:
-            support = support | SUPPORT_FAN_MODE
-        if "wind_swing_ud" in self._device_status_info["params"] or "wind_swing_lr" in self._device_status_info["params"]:
-            support = support | SUPPORT_SWING_MODE
-        return support
+        return SUPPORT_TARGET_TEMPERATURE | SUPPORT_FAN_MODE | SUPPORT_SWING_MODE
 
     @property
     def should_poll(self):
@@ -108,18 +102,7 @@ class MideaClimate(ClimateEntity):
 
     @property
     def swing_modes(self):
-        modes = [SWING_OFF]
-        ud = False
-        lr = False
-        if "wind_swing_ud" in self._device_status_info["params"]:
-            modes.append(SWING_VERTICAL)
-            ud = True
-        if "wind_swing_lr" in self._device_status_info["params"]:
-            modes.append(SWING_HORIZONTAL)
-            lr = True
-        if ud and lr:
-            modes.append(SWING_BOTH)
-        return modes
+        return [SWING_OFF, SWING_VERTICAL, SWING_HORIZONTAL, SWING_BOTH]
 
     @property
     def target_temperature_low(self):
@@ -156,7 +139,7 @@ class MideaClimate(ClimateEntity):
         else:
             return HVAC_MODE_OFF
 
-    def update(self, data: dict = None):
+    def update_data(self, data: dict = None):
         try:
             if "power" in data:  # 0 - off, 1 - onW
                 self._is_on = (data['power'] == "on")
@@ -196,6 +179,9 @@ class MideaClimate(ClimateEntity):
                 self._attr_swing_mode = SWING_OFF
         except:
             pass
+
+    def update(self, data: dict = None):
+        self.update_data(data)
         self.schedule_update_ha_state()
 
     def set_temperature(self, **kwargs) -> None:

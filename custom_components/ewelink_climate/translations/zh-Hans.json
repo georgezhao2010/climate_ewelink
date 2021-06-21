@@ -1,0 +1,17 @@
+{
+    "config": {
+        "error": {
+            "cant_login": "无法登录，请验证用户名密码"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "username": "用户名(手机)",
+                    "password": "密码"
+
+                },
+                "title": "以易微联账号登录"
+            }
+        }
+    }
+}
