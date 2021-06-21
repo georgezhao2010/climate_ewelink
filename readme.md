@@ -1,7 +1,7 @@
 
 The integration of Home Assistant, it allows you to control Midea AC devices through the eWeLink cloud.
 
-# Usage:
+### Usage:
 
 1.Download eWeLink app and register a account.
 
