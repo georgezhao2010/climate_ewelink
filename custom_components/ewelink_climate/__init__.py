@@ -5,7 +5,8 @@ from homeassistant.core import HomeAssistant
 from .const import (
     DOMAIN,
     CLIMATE_DEVICES,
-    STATES_MANAGER
+    STATES_MANAGER,
+    CONF_COUNTRY
 )
 
 from homeassistant.const import (
@@ -30,9 +31,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry):
 
     username = config[CONF_USERNAME]
     password = config[CONF_PASSWORD]
+    country = config[CONF_COUNTRY]
 
     session = async_create_clientsession(hass)
-    ewelink_cloud = EWeLinkCloud(session)
+    ewelink_cloud = EWeLinkCloud(session, country)
 
     await ewelink_cloud.login(username, password)
     devices = await ewelink_cloud.get_devices()

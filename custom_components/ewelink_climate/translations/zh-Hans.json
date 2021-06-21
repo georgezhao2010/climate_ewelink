@@ -6,8 +6,9 @@
         "step": {
             "user": {
                 "data": {
-                    "username": "用户名(手机)",
-                    "password": "密码"
+                    "username": "用户名",
+                    "password": "密码",
+                    "country": "国家"
 
                 },
                 "title": "以易微联账号登录"

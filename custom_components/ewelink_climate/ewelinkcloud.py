@@ -32,11 +32,16 @@ class eWeLinkDevice:
     def get_status(self):
         return self._status
 
+SERVERS = {
+    "cn": "cn-api.coolkit.cn:8080",
+    "oc": "eu-api.coolkit.cc:8080/"
+}
 
 class EWeLinkCloud:
-    def __init__(self, session: ClientSession):
+    def __init__(self, session: ClientSession, country):
         self._apikey = None
         self._token = None
+        self._country = country
         self._session = session
 
     async def login(self, username: str, password: str):
@@ -46,7 +51,7 @@ class EWeLinkCloud:
                            json.dumps(payload).encode(),
                            digestmod=hashlib.sha256).digest()
         auth = "Sign " + base64.b64encode(hex_dig).decode()
-        r = await self._session.post('https://cn-api.coolkit.cn:8080/api/user/login', json=payload,
+        r = await self._session.post(f"https://{SERVERS[self._country]}/api/user/login", json=payload,
                                headers={'Authorization': auth})
         rejson = await r.json()
         if "at" in rejson and "user" in rejson and "apikey" in rejson["user"]:
@@ -59,7 +64,7 @@ class EWeLinkCloud:
         payload = {'getTags': 1}
         payload = update_payload(payload)
         auth = "Bearer " + self._token
-        r = await self._session.get('https://cn-api.coolkit.cn:8080/api/user/device', params=payload,
+        r = await self._session.get(f"https://{SERVERS[self._country]}/api/user/device", params=payload,
                               headers={'Authorization': auth})
 
         rejson = await r.json()
@@ -76,7 +81,7 @@ class EWeLinkCloud:
         payload = {'accept': 'ws'}
         payload = update_payload(payload)
         auth = "Bearer " + self._token
-        r = await self._session.get('https://cn-api.coolkit.cn:8080/dispatch/app', params=payload,
+        r = await self._session.get(f"https://{SERVERS[self._country]}/dispatch/app", params=payload,
                               headers={'Authorization': auth})
         rejson = await r.json()
         return f"wss://{rejson['domain']}:{rejson['port']}/api/ws"

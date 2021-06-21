@@ -6,8 +6,9 @@
         "step": {
             "user": {
                 "data": {
-                    "username": "Username (Mobile phone)",
-                    "password": "Password"
+                    "username": "Username",
+                    "password": "Password",
+                    "country": "Country"
 
                 },
                 "title": "Add with eWeLink account"
