@@ -1,7 +1,6 @@
 import logging
 from homeassistant import config_entries
 import voluptuous as vol
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .const import DOMAIN, CONF_COUNTRY
 from .ewelinkcloud import EWeLinkCloud
@@ -19,9 +18,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input=None, error=None):
 
         if user_input is not None:
-            session = async_create_clientsession(self.hass)
-            cloud = EWeLinkCloud(session, user_input[CONF_COUNTRY])
-            if await cloud.login(user_input[CONF_USERNAME], user_input[CONF_PASSWORD]):
+            cloud = EWeLinkCloud(user_input[CONF_COUNTRY], user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
+            if await self.hass.async_add_executor_job(cloud.login):
                 return self.async_create_entry(title=user_input[CONF_USERNAME], data=user_input)
             else:
                 return await self.async_step_user(error="cant_login")

@@ -5,6 +5,8 @@ import hashlib
 import hmac
 import json
 import logging
+import requests
+
 from aiohttp import ClientSession
 
 _LOGGER = logging.getLogger(__name__)
@@ -21,15 +23,17 @@ def update_payload(payload):
     return payload
 
 
-class eWeLinkDevice:
+class EWeLinkDevice:
     def __init__(self, deviceid, status):
         self._deviceid = deviceid
         self._status = status
 
-    def get_deviceid(self):
+    @property
+    def deviceid(self):
         return self._deviceid
 
-    def get_status(self):
+    @property
+    def status(self):
         return self._status
 
 SERVERS = {
@@ -38,56 +42,63 @@ SERVERS = {
 }
 
 class EWeLinkCloud:
-    def __init__(self, session: ClientSession, country):
+    def __init__(self, country: str, username: str, password: str):
         self._apikey = None
         self._token = None
         self._country = country
-        self._session = session
+        self._username = username
+        self._password = password
 
-    async def login(self, username: str, password: str):
-        payload = {'phoneNumber': username, 'password': password}
+    def login(self):
+        payload = {'phoneNumber': self._username, 'password': self._password}
         payload = update_payload(payload)
         hex_dig = hmac.new(APPSECRET.encode(),
                            json.dumps(payload).encode(),
                            digestmod=hashlib.sha256).digest()
         auth = "Sign " + base64.b64encode(hex_dig).decode()
-        r = await self._session.post(f"https://{SERVERS[self._country]}/api/user/login", json=payload,
+        r = requests.post(f"https://{SERVERS[self._country]}/api/user/login", json=payload,
                                headers={'Authorization': auth})
-        rejson = await r.json()
-        if "at" in rejson and "user" in rejson and "apikey" in rejson["user"]:
-            self._apikey = rejson["user"]["apikey"]
-            self._token = rejson["at"]
-            return True
+        if r.status_code == 200:
+            rejson = r.json()
+            if "at" in rejson and "user" in rejson and "apikey" in rejson["user"]:
+                self._apikey = rejson["user"]["apikey"]
+                self._token = rejson["at"]
+                return True
         return False
 
-    async def get_devices(self):
+    def get_devices(self):
         payload = {'getTags': 1}
         payload = update_payload(payload)
         auth = "Bearer " + self._token
-        r = await self._session.get(f"https://{SERVERS[self._country]}/api/user/device", params=payload,
+        devices: EWeLinkDevice[dict] = {}
+        r = requests.get(f"https://{SERVERS[self._country]}/api/user/device", params=payload,
                               headers={'Authorization': auth})
+        if r.status_code == 200:
+            rejson = r.json()
 
-        rejson = await r.json()
-        devices: eWeLinkDevice[dict] = {}
-        for index in range(len(rejson['devicelist'])):
-            if rejson['devicelist'][index]['uiid'] in SUPPORTED_CLIMATES:
-                devices[rejson['devicelist'][index]['deviceid']] = eWeLinkDevice(rejson['devicelist'][index]['deviceid'],
-                                                                                 rejson['devicelist'][index])
-            else:
-                _LOGGER.debug(f"Unsupported device: {rejson['devicelist'][index]}")
+            for index in range(len(rejson['devicelist'])):
+                if rejson['devicelist'][index]['uiid'] in SUPPORTED_CLIMATES:
+                    devices[rejson['devicelist'][index]['deviceid']] = EWeLinkDevice(rejson['devicelist'][index]['deviceid'],
+                                                                                     rejson['devicelist'][index])
+                else:
+                    _LOGGER.debug(f"Unsupported device: {rejson['devicelist'][index]}")
         return devices;
 
-    async def get_ws_url(self):
+    def get_ws_url(self):
         payload = {'accept': 'ws'}
         payload = update_payload(payload)
         auth = "Bearer " + self._token
-        r = await self._session.get(f"https://{SERVERS[self._country]}/dispatch/app", params=payload,
+        r = requests.get(f"https://{SERVERS[self._country]}/dispatch/app", params=payload,
                               headers={'Authorization': auth})
-        rejson = await r.json()
-        return f"wss://{rejson['domain']}:{rejson['port']}/api/ws"
+        if r.status_code == 200:
+            rejson = r.json()
+            return f"wss://{rejson['domain']}:{rejson['port']}/api/ws"
+        return None
 
-    def get_apikey(self):
+    @property
+    def apikey(self):
         return self._apikey
 
-    def get_token(self):
+    @property
+    def token(self):
         return self._token

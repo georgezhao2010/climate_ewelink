@@ -1,9 +1,9 @@
 {
   "domain": "ewelink_climate",
   "name": "Climate via eWeLink",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "config_flow": true,
-  "documentation": "",
+  "documentation": "https://github.com/georgezhao2010/ewelink_climate",
   "requirements": [],
   "dependencies": [],
   "iot_class": "cloud_polling",

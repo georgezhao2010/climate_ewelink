@@ -23,7 +23,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     devices = []
     states_manager = hass.data[config_entry.entry_id][STATES_MANAGER]
     for deviceid,device in hass.data[config_entry.entry_id][CLIMATE_DEVICES].items():
-        dev = EWeLinkClimate(states_manager, deviceid, device.get_status())
+        dev = EWeLinkClimate(states_manager, deviceid, device.status)
         devices.append(dev)
     async_add_entities(devices)
 
