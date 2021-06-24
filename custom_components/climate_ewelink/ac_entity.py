@@ -33,11 +33,6 @@ AC_SWITCHES = {
         "name": "Comfort Mode",
         "icon": "mdi:alpha-c-circle",
     },
-    "dry": {
-        "type": "switch",
-        "name": "Dry Mode",
-        "icon": "mdi:car-defrost-rear",
-    },
     "prevent_straight_wind": {
         "type": "switch",
         "name": "Indirect Wind",
