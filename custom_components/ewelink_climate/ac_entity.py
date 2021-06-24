@@ -36,7 +36,7 @@ AC_SWITCHES = {
     "dry": {
         "type": "switch",
         "name": "Dry Mode",
-        "icon": "mdi:alpha-c-circle",
+        "icon": "mdi:car-defrost-rear",
     },
     "prevent_straight_wind": {
         "type": "switch",
