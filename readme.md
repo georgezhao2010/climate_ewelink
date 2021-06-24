@@ -35,6 +35,6 @@ Once the integration is installed, go to your integration page and follow the co
 - ECO mode
 - Comfort mode
 - Dry mode
-- Indirect Wind
-- Wind Swing Horizontal
-- Wind Swing Vertical
+- Indirect wind
+- Wind swing horizontal
+- Wind swing vertical
