@@ -91,7 +91,7 @@ class AirConditionerEntity(Entity):
 
     def _update_state(self, status):
         if self._state_key in status:
-            if "value_change" in AC_SWITCHES[self._state_key] \
+            if "value_exchange" in AC_SWITCHES[self._state_key] \
                     and str(status[self._state_key]) in AC_SWITCHES[self._state_key]["value_exchange"]["get"]:
                 value = AC_SWITCHES[self._state_key]["value_exchange"]["get"][str(status[self._state_key])]
             else:

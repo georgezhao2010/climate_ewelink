@@ -36,14 +36,14 @@ class ACSwitch(AirConditionerEntity, ToggleEntity):
 
     def turn_on(self, **kwargs: Any):
         value = STATE_ON
-        if "value_change" in AC_SWITCHES[self._state_key] and \
+        if "value_exchange" in AC_SWITCHES[self._state_key] and \
                 value in AC_SWITCHES[self._state_key]["value_exchange"]["set"]:
             value = AC_SWITCHES[self._state_key]["value_exchange"]["set"][value]
         self._state_manager.send_payload(self._device_id, {"power": "on", self._state_key: value})
 
     def turn_off(self, **kwargs: Any):
         value = STATE_OFF
-        if "value_change" in AC_SWITCHES[self._state_key] and \
+        if "value_exchange" in AC_SWITCHES[self._state_key] and \
                 value in AC_SWITCHES[self._state_key]["value_exchange"]["set"]:
             value = AC_SWITCHES[self._state_key]["value_exchange"]["set"][value]
         self._state_manager.send_payload(self._device_id, {self._state_key: value})
