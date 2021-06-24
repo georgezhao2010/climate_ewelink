@@ -20,7 +20,7 @@ Once the integration is installed, go to your integration page and follow the co
 - Password (eWeLink App)
 - Country (China or Outside China)
 
-# feature:
+# Feature:
 
 ## Climate
 
