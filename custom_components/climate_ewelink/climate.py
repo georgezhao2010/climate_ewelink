@@ -150,7 +150,6 @@ class EWeLinkClimate(ClimateEntity):
     def update_data(self, data: dict = None):
         try:
             if "online" in data:
-                _LOGGER.debug("Climate is offline")
                 self._is_online = data["online"]
             if "power" in data:  # 0 - off, 1 - onW
                 self._is_on = (data['power'] == "on")

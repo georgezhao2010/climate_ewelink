@@ -6,7 +6,6 @@ import logging
 
 from .const import APPID
 from .ewelinkcloud import EWeLinkCloud
-from .ewelinkcloud import EWeLinkDevice
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
@@ -50,7 +49,6 @@ class StateManager(threading.Thread):
         self.send_json(payload)
 
     def on_message(self, message):
-        _LOGGER.debug(f"WebSocket message received - {message}")
         data = json.loads(message)
         if data:
             if "error" in data:
@@ -70,7 +68,6 @@ class StateManager(threading.Thread):
 
     def send_json(self, jsondata):
         message = json.dumps(jsondata)
-        _LOGGER.debug(f"send pyload - {message}")
         self._ws.send(message)
 
     def send_query(self, deviceid):
