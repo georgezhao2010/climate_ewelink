@@ -1,18 +1,40 @@
+# Midea Air Conditioner via eWeLink Cloud
 
-The integration of Home Assistant, it allows you to control Midea AC devices through the eWeLink cloud.
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
-### Usage:
+The custom component of Home Assistant, allows you to control Midea AC devices via the eWeLink cloud.
 
-1.Download eWeLink app and register a account.
+# Before use
 
-2.In eWeLink app, bind your Midea account.
+Download the eWeLink App from App Store (iOS) or Google Play (Android), and register a eWeLink account, if you don't already have one.
 
-3.Download this integration and put it to your custom_components folder in Home Assistant.
+# Installtion
 
-4.Restart Home Assistant.
+Use HACS and Install as a custom repository.
 
-5.In integration page of Home Assistant, add a new integration and choice **Climate via eWeLink**.
+# Configuration
 
-6.Input your username and password of eWeLink, choice your country and click OK.
+Once the integration is installed, go to your integration page and follow the configuration options as below:
 
-7.If all goes well, your should find one or more new climate deivces. So, Enjoy it.
+- Username (eWeLink App)
+- Password (eWeLink App)
+- Country (China or Outside China)
+
+# feature:
+
+## Climate
+
+- Air Conditiner
+
+## Sensor
+
+- Outdoor temperature
+
+## Switches:
+
+- ECO mode
+- Comfort mode
+- Dry mode
+- Indirect Wind
+- Wind Swing Horizontal
+- Wind Swing Vertical
