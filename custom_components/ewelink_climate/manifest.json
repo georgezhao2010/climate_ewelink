@@ -1,11 +1,12 @@
 {
   "domain": "ewelink_climate",
-  "name": "Climate via eWeLink",
-  "version": "0.1.4",
+  "name": "Midea A/C via eWeLink",
+  "version": "v0.2.1",
   "config_flow": true,
   "documentation": "https://github.com/georgezhao2010/ewelink_climate",
+  "issue_tracker": "https://github.com/georgezhao2010/ewelink_climate/issues",
   "requirements": [],
   "dependencies": [],
-  "iot_class": "cloud_polling",
+  "iot_class": "cloud_push",
   "codeowners": ["@georgezhao2010"]
 }

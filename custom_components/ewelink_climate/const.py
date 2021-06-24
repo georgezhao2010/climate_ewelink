@@ -3,10 +3,12 @@ DOMAIN = "ewelink_climate"
 STATES_MANAGER = "state_manager"
 CLIMATE_DEVICES = "climate_devices"
 
-APPSECRET = "6Nz4n0xA8s8qdxQf2GqurZj2Fs55FUvM"
-APPID = "oeVkj2lYFGnJu5XUtWisfW4utiN4u9Mq"
+APPSECRET = "oKvCM06gvwkRbfetd6qWRrbC3rFrbIpV"
+APPID = "4s1FXKC9FaGfoqXhmXSJneb3qcm1gOak"
 
 CONF_COUNTRY = "country"
+
+MODE_OFFLINE = "Offline"
 
 TEMPERATURE_MAX = 30
 TEMPERATURE_MIN = 16

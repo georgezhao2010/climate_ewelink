@@ -11,6 +11,11 @@ from .ewelinkcloud import EWeLinkDevice
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
+
+class WebsocketNotOnlineException(Exception):
+    pass
+
+
 class StateManager(threading.Thread):
     def __init__(self, ewelink_cloud: EWeLinkCloud):
         threading.Thread.__init__(self)
@@ -22,6 +27,12 @@ class StateManager(threading.Thread):
         self._apikey = None
         self._last_ts = 0
         self._device_updates = {}
+
+    def update_device(self, deviceid, params):
+        updates = self._device_updates[deviceid]
+        if updates:
+            for update_state in updates:
+                update_state(params)
 
     def on_open(self):
         ts = time.time()
@@ -39,18 +50,28 @@ class StateManager(threading.Thread):
         self.send_json(payload)
 
     def on_message(self, message):
+        _LOGGER.debug(f"WebSocket message received - {message}")
         data = json.loads(message)
         if data:
-            if "deviceid" in data and "params" in data:
-                update = self._device_updates[data["deviceid"]]
-                if update:
-                    update(data["params"])
-            elif "config" in data:
-                for deviceid, device in self._devices.items():
-                    self.send_query(deviceid)
+            if "error" in data:
+                if data["error"] == 0:
+                    if "config" in data:
+                        for deviceid, device in self._devices.items():
+                            self.send_query(deviceid)
+                    elif "deviceid" in data and "params" in data:
+                        self.update_device(data["deviceid"], data["params"])
+                else:
+                    if "deviceid" in data and "reason" in data:
+                        _LOGGER.warning(f"Command failed, deviceid:{data['deviceid']}, "
+                                        f"error code: {data['error']}, reason: {data['reason']}")
+            elif "action" in data and data["action"] == "update" or data["action"] == "sysmsg" \
+                    and "deviceid" in data and "params" in data:
+                self.update_device(data["deviceid"], data["params"])
 
     def send_json(self, jsondata):
-        self._ws.send(json.dumps(jsondata))
+        message = json.dumps(jsondata)
+        _LOGGER.debug(f"send pyload - {message}")
+        self._ws.send(message)
 
     def send_query(self, deviceid):
         self.send_payload(deviceid, {"_query": 1})
@@ -106,6 +127,8 @@ class StateManager(threading.Thread):
     def start_keep_alive(self):
         threading.Thread.start(self)
 
-    def set_update(self, deviceid, update):
-        self._device_updates[deviceid] = update
+    def add_update(self, deviceid, update):
+        if deviceid not in self._device_updates:
+            self._device_updates[deviceid] = []
+        self._device_updates[deviceid].append(update)
 

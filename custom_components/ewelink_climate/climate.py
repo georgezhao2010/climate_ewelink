@@ -6,18 +6,22 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     PRECISION_WHOLE,
     PRECISION_TENTHS,
-    ATTR_TEMPERATURE
+    ATTR_TEMPERATURE,
+    STATE_ON,
+    STATE_OFF
 )
 from .const import (
     DOMAIN,
     TEMPERATURE_MIN,
     TEMPERATURE_MAX,
     STATES_MANAGER,
-    CLIMATE_DEVICES
+    CLIMATE_DEVICES,
+    MODE_OFFLINE
 )
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
+
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     devices = []
@@ -27,6 +31,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         devices.append(dev)
     async_add_entities(devices)
 
+
 class EWeLinkClimate(ClimateEntity):
     def __init__(self, states_manager, deviceid:str, device_status):
         self._is_on = None
@@ -34,13 +39,14 @@ class EWeLinkClimate(ClimateEntity):
         self._unique_id = f"{DOMAIN}.{deviceid}"
         self.entity_id = self._unique_id
         self._states_manager = states_manager
-        self._states_manager.set_update(self._device_id, self.update)
+        self._states_manager.add_update(self._device_id, self.update)
         self._attr_precision = PRECISION_TENTHS
         self._attr_fan_mode = None
         self._attr_indoor_temperature = None
-        self._attr_outdoor_temperature = None
         self._attr_target_temperature = None
         self._attr_swing_mode = None
+        self._is_online = True
+
         if "params" in device_status:
             self.update_data(device_status["params"])
         manufacturer = "Unknow"
@@ -82,7 +88,7 @@ class EWeLinkClimate(ClimateEntity):
 
     @property
     def hvac_modes(self):
-        return [HVAC_MODE_OFF, HVAC_MODE_HEAT, HVAC_MODE_COOL, HVAC_MODE_AUTO, HVAC_MODE_DRY, HVAC_MODE_FAN_ONLY]
+        return [MODE_OFFLINE, HVAC_MODE_OFF, HVAC_MODE_HEAT, HVAC_MODE_COOL, HVAC_MODE_AUTO, HVAC_MODE_DRY, HVAC_MODE_FAN_ONLY]
 
     @property
     def temperature_unit(self):
@@ -134,28 +140,32 @@ class EWeLinkClimate(ClimateEntity):
 
     @property
     def state(self) -> str:
-        if self._is_on:
+        if self._is_online is False:
+            return MODE_OFFLINE
+        elif self._is_on:
             return self.hvac_mode
         else:
             return HVAC_MODE_OFF
 
     def update_data(self, data: dict = None):
         try:
+            if "online" in data:
+                _LOGGER.debug("Climate is offline")
+                self._is_online = data["online"]
             if "power" in data:  # 0 - off, 1 - onW
                 self._is_on = (data['power'] == "on")
-
-            if 'mode' in data:  # 0 - heat, 1 - cool, 15 - off
+            if "mode" in data:  # 0 - heat, 1 - cool, 15 - off
                 if data['mode'] == "fan":
                     self._attr_hvac_mode = HVAC_MODE_FAN_ONLY
                 else:
                     self._attr_hvac_mode = data['mode']
-
             if 'wind_speed' in data:  # 0 - low, 3 - auto, 15 - off
-                if data['wind_speed'] > 100:
+                self._attr_fan_speed = data['wind_speed']
+                if self._attr_fan_speed > 100:
                     self._attr_fan_mode = FAN_AUTO
-                elif data['wind_speed'] > 70:
+                elif self._attr_fan_speed > 70:
                     self._attr_fan_mode = FAN_HIGH
-                elif data['wind_speed'] > 30:
+                elif self._attr_fan_speed > 30:
                     self._attr_fan_mode = FAN_MEDIUM
                 else:
                     self._attr_fan_mode = FAN_LOW
@@ -163,20 +173,7 @@ class EWeLinkClimate(ClimateEntity):
                 self._attr_target_temperature = data["temperature"]
             if "indoor_temperature" in data:
                 self._attr_indoor_temperature = data["indoor_temperature"]
-            if "outdoor_temperature" in data:
-                self._attr_outdoor_temperature = data["outdoor_temperature"]
-            if "wind_swing_lr" in data:
-                self._wind_swing_lr = data["wind_swing_lr"]
-            if "wind_swing_ud" in data:
-                self._wind_swing_ud = data["wind_swing_ud"]
-            if self._wind_swing_lr == "on" and self._wind_swing_ud == "on":
-                self._attr_swing_mode = SWING_BOTH
-            elif self._wind_swing_lr == "on":
-                self._attr_swing_mode = SWING_HORIZONTAL
-            elif self._wind_swing_ud == "on":
-                self._attr_swing_mode = SWING_VERTICAL
-            else:
-                self._attr_swing_mode = SWING_OFF
+
         except:
             pass
 
@@ -185,46 +182,46 @@ class EWeLinkClimate(ClimateEntity):
         self.schedule_update_ha_state()
 
     def set_temperature(self, **kwargs) -> None:
-        temperature = int(kwargs[ATTR_TEMPERATURE])
-        self._states_manager.send_payload(self._device_id, {"temperature": temperature})
+        if self.state != MODE_OFFLINE:
+            temperature = int(kwargs[ATTR_TEMPERATURE])
+            self._states_manager.send_payload(self._device_id, {"temperature": temperature})
 
     def set_fan_mode(self, fan_mode: str) -> None:
-        wind_speed = 102
-        if fan_mode == FAN_LOW:
-            wind_speed = 29
-        elif fan_mode == FAN_MEDIUM:
-            wind_speed = 69
-        elif fan_mode == FAN_HIGH:
-            wind_speed = 99
-        self._states_manager.send_payload(self._device_id, {"power": "on","wind_speed": wind_speed})
+        if self.state != MODE_OFFLINE:
+            wind_speed = 102
+            if fan_mode == FAN_LOW:
+                wind_speed = 29
+            elif fan_mode == FAN_MEDIUM:
+                wind_speed = 69
+            elif fan_mode == FAN_HIGH:
+                wind_speed = 99
+            self._states_manager.send_payload(self._device_id, {"power": "on","wind_speed": wind_speed})
 
     def set_hvac_mode(self, hvac_mode: str) -> None:
-        mode = hvac_mode
-        mode_key = "mode"
-        if hvac_mode == HVAC_MODE_OFF:
-            mode_key = "power"
-        elif hvac_mode == HVAC_MODE_FAN_ONLY:
-            mode = "fan"
-        self._states_manager.send_payload(self._device_id, {"power": "on", mode_key: mode})
+        if self.state != MODE_OFFLINE:
+            mode = hvac_mode
+            mode_key = "mode"
+            if hvac_mode == HVAC_MODE_OFF:
+                mode_key = "power"
+            elif hvac_mode == HVAC_MODE_FAN_ONLY:
+                mode = "fan"
+            self._states_manager.send_payload(self._device_id, {"power": "on", mode_key: mode})
 
     def set_swing_mode(self, swing_mode: str) -> None:
-        data = {"wind_swing_lr": "off", "wind_swing_ud": "off"}
-        if swing_mode == SWING_BOTH:
-            data = {"wind_swing_lr": "on", "wind_swing_ud": "on"}
-        elif swing_mode == SWING_VERTICAL:
-            data = {"wind_swing_lr": "off", "wind_swing_ud": "on"}
-        elif swing_mode == SWING_HORIZONTAL:
-            data = {"wind_swing_lr": "on", "wind_swing_ud": "off"}
-        self._states_manager.send_payload(self._device_id, data)
+        if self.state != MODE_OFFLINE:
+            data = {"wind_swing_lr": "off", "wind_swing_ud": "off"}
+            if swing_mode == SWING_BOTH:
+                data = {"wind_swing_lr": "on", "wind_swing_ud": "on"}
+            elif swing_mode == SWING_VERTICAL:
+                data = {"wind_swing_lr": "off", "wind_swing_ud": "on"}
+            elif swing_mode == SWING_HORIZONTAL:
+                data = {"wind_swing_lr": "on", "wind_swing_ud": "off"}
+            self._states_manager.send_payload(self._device_id, data)
 
     def turn_on(self):
-        self._states_manager.send_payload(self._device_id, {"power": "on"})
+        if self.state != MODE_OFFLINE:
+            self._states_manager.send_payload(self._device_id, {"power": "on"})
 
     def turn_off(self):
-        self._states_manager.send_payload(self._device_id, {"power": "off"})
-
-    async def async_turn_on(self) -> None:
-        await self.hass.async_add_executor_job(self.turn_on)
-
-    async def async_turn_off(self) -> None:
-        await self.hass.async_add_executor_job(self.turn_off)
+        if self.state != MODE_OFFLINE:
+            self._states_manager.send_payload(self._device_id, {"power": "off"})

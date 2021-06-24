@@ -12,6 +12,7 @@ from aiohttp import ClientSession
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
+
 def update_payload(payload):
     ts = int(time.time());
     payload.update({
@@ -25,21 +26,23 @@ def update_payload(payload):
 
 class EWeLinkDevice:
     def __init__(self, deviceid, status):
-        self._deviceid = deviceid
+        self._device_id = deviceid
         self._status = status
 
     @property
     def deviceid(self):
-        return self._deviceid
+        return self._device_id
 
     @property
     def status(self):
         return self._status
 
+
 SERVERS = {
     "cn": "cn-api.coolkit.cn:8080",
     "oc": "eu-api.coolkit.cc:8080/"
 }
+
 
 class EWeLinkCloud:
     def __init__(self, country: str, username: str, password: str):
@@ -57,7 +60,7 @@ class EWeLinkCloud:
                            digestmod=hashlib.sha256).digest()
         auth = "Sign " + base64.b64encode(hex_dig).decode()
         r = requests.post(f"https://{SERVERS[self._country]}/api/user/login", json=payload,
-                               headers={'Authorization': auth})
+                          headers={'Authorization': auth})
         if r.status_code == 200:
             rejson = r.json()
             if "at" in rejson and "user" in rejson and "apikey" in rejson["user"]:
@@ -72,14 +75,15 @@ class EWeLinkCloud:
         auth = "Bearer " + self._token
         devices: EWeLinkDevice[dict] = {}
         r = requests.get(f"https://{SERVERS[self._country]}/api/user/device", params=payload,
-                              headers={'Authorization': auth})
+                         headers={'Authorization': auth})
         if r.status_code == 200:
             rejson = r.json()
 
             for index in range(len(rejson['devicelist'])):
                 if rejson['devicelist'][index]['uiid'] in SUPPORTED_CLIMATES:
-                    devices[rejson['devicelist'][index]['deviceid']] = EWeLinkDevice(rejson['devicelist'][index]['deviceid'],
-                                                                                     rejson['devicelist'][index])
+                    devices[rejson['devicelist'][index]['deviceid']] = EWeLinkDevice(
+                        rejson['devicelist'][index]['deviceid'],
+                        rejson['devicelist'][index])
                 else:
                     _LOGGER.debug(f"Unsupported device: {rejson['devicelist'][index]}")
         return devices;
@@ -89,7 +93,7 @@ class EWeLinkCloud:
         payload = update_payload(payload)
         auth = "Bearer " + self._token
         r = requests.get(f"https://{SERVERS[self._country]}/dispatch/app", params=payload,
-                              headers={'Authorization': auth})
+                         headers={'Authorization': auth})
         if r.status_code == 200:
             rejson = r.json()
             return f"wss://{rejson['domain']}:{rejson['port']}/api/ws"
