@@ -1,4 +1,4 @@
-from .ac_entity import AirConditionerEntity, AC_SWITCHES
+from .ac_entity import AirConditionerEntity, AC_ENTITIES
 from homeassistant.helpers.entity import ToggleEntity
 from homeassistant.const import (
     STATE_ON,
@@ -22,7 +22,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     devices = []
     states_manager = hass.data[config_entry.entry_id][STATES_MANAGER]
     for deviceid, device in hass.data[config_entry.entry_id][CLIMATE_DEVICES].items():
-        for state_key, config in AC_SWITCHES.items():
+        for state_key, config in AC_ENTITIES.items():
             if config["type"] == "switch":
                 dev = ACSwitch(states_manager, deviceid, state_key, device.status)
                 devices.append(dev)
@@ -36,16 +36,16 @@ class ACSwitch(AirConditionerEntity, ToggleEntity):
 
     def turn_on(self, **kwargs: Any):
         value = STATE_ON
-        if "value_exchange" in AC_SWITCHES[self._state_key] and \
-                value in AC_SWITCHES[self._state_key]["value_exchange"]["set"]:
-            value = AC_SWITCHES[self._state_key]["value_exchange"]["set"][value]
+        if "value_exchange" in AC_ENTITIES[self._state_key] and \
+                value in AC_ENTITIES[self._state_key]["value_exchange"]["set"]:
+            value = AC_ENTITIES[self._state_key]["value_exchange"]["set"][value]
         self._state_manager.send_payload(self._device_id, {"power": "on", self._state_key: value})
 
     def turn_off(self, **kwargs: Any):
         value = STATE_OFF
-        if "value_exchange" in AC_SWITCHES[self._state_key] and \
-                value in AC_SWITCHES[self._state_key]["value_exchange"]["set"]:
-            value = AC_SWITCHES[self._state_key]["value_exchange"]["set"][value]
+        if "value_exchange" in AC_ENTITIES[self._state_key] and \
+                value in AC_ENTITIES[self._state_key]["value_exchange"]["set"]:
+            value = AC_ENTITIES[self._state_key]["value_exchange"]["set"][value]
         self._state_manager.send_payload(self._device_id, {self._state_key: value})
 
     def _update_state(self, status):

@@ -28,10 +28,11 @@ class StateManager(threading.Thread):
         self._device_updates = {}
 
     def update_device(self, deviceid, params):
-        updates = self._device_updates[deviceid]
-        if updates:
-            for update_state in updates:
-                update_state(params)
+        if deviceid in self._device_updates:
+            updates = self._device_updates[deviceid]
+            if updates:
+                for update_state in updates:
+                    update_state(params)
 
     def on_open(self):
         ts = time.time()
@@ -117,6 +118,7 @@ class StateManager(threading.Thread):
                                               on_open=self.on_open, on_message=self.on_message)
             self._ws.keep_running = True
             threading.Thread(target = self._ws.run_forever(ping_interval=145, ping_timeout=5))
+            _LOGGER.debug("websocket disconnected, retrying")
             self._ws.close()
             self._ws = None
             self._url = None
