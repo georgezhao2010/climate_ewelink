@@ -1,7 +1,7 @@
 {
   "domain": "climate_ewelink",
   "name": "Midea A/C via eWeLink",
-  "version": "v1.0.24",
+  "version": "v1.0.30",
   "config_flow": true,
   "documentation": "https://github.com/georgezhao2010/climate_ewelink",
   "issue_tracker": "https://github.com/georgezhao2010/climate_ewelink/issues",
