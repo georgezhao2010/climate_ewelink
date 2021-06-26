@@ -36,7 +36,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
 class EWeLinkClimate(AirConditionerEntity, ClimateEntity):
     def __init__(self, states_manager, deviceid:str, device_status):
-        AirConditionerEntity.__init__(self, states_manager, deviceid, "climate", device_status)
+        super().__init__(states_manager, deviceid, "climate", device_status)
         self._attr_precision = PRECISION_TENTHS
         self._attr_fan_mode = None
         self._attr_indoor_temperature = None

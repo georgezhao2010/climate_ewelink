@@ -119,20 +119,20 @@ class AirConditionerEntity(Entity):
 
     @property
     def device_class(self):
-        return AC_ENTITIES[self._state_key]["device_class"] if "device_class" in AC_ENTITIES[self._state_key] else None
+        return AC_ENTITIES[self._state_key].get("device_class")
 
     @property
     def name(self):
-        return f"{self._device_name} {AC_ENTITIES[self._state_key]['name']}" if "name" in AC_ENTITIES[self._state_key] \
+        return f"{self._device_name} {AC_ENTITIES[self._state_key].get('name')}" if "name" in AC_ENTITIES[self._state_key] \
                 else self._device_name
 
     @property
     def unit_of_measurement(self):
-        return AC_ENTITIES[self._state_key]["unit"] if "unit" in AC_ENTITIES[self._state_key] else None
+        return AC_ENTITIES[self._state_key].get("unit")
 
     @property
     def icon(self):
-        return AC_ENTITIES[self._state_key]["icon"] if "icon" in AC_ENTITIES[self._state_key] else None
+        return AC_ENTITIES[self._state_key].get("icon")
 
     @property
     def state(self):

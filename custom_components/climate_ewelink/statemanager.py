@@ -17,7 +17,7 @@ class WebsocketNotOnlineException(Exception):
 
 class StateManager(threading.Thread):
     def __init__(self, ewelink_cloud: EWeLinkCloud):
-        threading.Thread.__init__(self)
+        super().__init__()
         self._ws = None
         self._url = None
         self._devices = {}
@@ -69,7 +69,8 @@ class StateManager(threading.Thread):
 
     def send_json(self, jsondata):
         message = json.dumps(jsondata)
-        self._ws.send(message)
+        if self._ws:
+            self._ws.send(message)
 
     def send_query(self, deviceid):
         self.send_payload(deviceid, {"_query": 1})
@@ -111,13 +112,13 @@ class StateManager(threading.Thread):
                     self._token = self._ewelink_cloud.token
                     self._apikey = self._ewelink_cloud.apikey
                 else:
-                    _LOGGER.debug("could not login to eWeLink Cloud, retry after 30 seconds")
+                    _LOGGER.debug("could not login to eWeLink cloud, retry after 30 seconds")
                     time.sleep(30)
 
             self._ws = websocket.WebSocketApp(self._url,
                                               on_open=self.on_open, on_message=self.on_message)
             self._ws.keep_running = True
-            threading.Thread(target = self._ws.run_forever(ping_interval=145, ping_timeout=5))
+            threading.Thread(target=self._ws.run_forever(ping_interval=145, ping_timeout=5))
             _LOGGER.debug("websocket disconnected, retrying")
             self._ws.close()
             self._ws = None
