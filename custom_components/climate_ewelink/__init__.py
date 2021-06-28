@@ -14,7 +14,6 @@ from .ewelinkcloud import EWeLinkCloud
 from .statemanager import StateManager
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 
 async def async_setup(hass: HomeAssistant, hass_config: dict):

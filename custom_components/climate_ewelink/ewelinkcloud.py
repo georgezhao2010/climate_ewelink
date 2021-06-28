@@ -10,7 +10,6 @@ import requests
 from aiohttp import ClientSession
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 
 def update_payload(payload):

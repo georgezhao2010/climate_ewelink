@@ -8,16 +8,28 @@ from .const import APPID
 from .ewelinkcloud import EWeLinkCloud
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 
 class WebsocketNotOnlineException(Exception):
     pass
 
 
+_STATE_MANAGER = None
+
+
+def on_open(ws):
+    _LOGGER.warning(f"WebSocket connection established, send userOnline")
+    _STATE_MANAGER.send_user_online()
+
+
+def on_message(ws, message):
+    _STATE_MANAGER.process_message(message)
+
+
 class StateManager(threading.Thread):
     def __init__(self, ewelink_cloud: EWeLinkCloud):
         super().__init__()
+        self._lock = threading.Lock()
         self._ws = None
         self._url = None
         self._devices = {}
@@ -26,6 +38,16 @@ class StateManager(threading.Thread):
         self._apikey = None
         self._last_ts = 0
         self._device_updates = {}
+        global _STATE_MANAGER
+        _STATE_MANAGER = self
+
+    @property
+    def token(self):
+        return self._token
+
+    @property
+    def apikey(self):
+        return self._apikey
 
     def update_device(self, deviceid, params):
         if deviceid in self._device_updates:
@@ -34,7 +56,7 @@ class StateManager(threading.Thread):
                 for update_state in updates:
                     update_state(params)
 
-    def on_open(self):
+    def send_user_online(self):
         ts = time.time()
         payload = {
             'action': 'userOnline',
@@ -49,7 +71,8 @@ class StateManager(threading.Thread):
         }
         self.send_json(payload)
 
-    def on_message(self, message):
+    def process_message(self, message):
+        _LOGGER.debug(f"Received message {message}")
         data = json.loads(message)
         if data:
             if "error" in data:
@@ -67,13 +90,15 @@ class StateManager(threading.Thread):
                     and "deviceid" in data and "params" in data:
                 self.update_device(data["deviceid"], data["params"])
 
-    def send_json(self, jsondata):
-        message = json.dumps(jsondata)
-        if self._ws:
-            self._ws.send(message)
-
     def send_query(self, deviceid):
         self.send_payload(deviceid, {"_query": 1})
+
+    def send_json(self, jsondata):
+        message = json.dumps(jsondata)
+        _LOGGER.debug(f"Send message {message}")
+        with self._lock:
+            if self._ws is not None:
+                self._ws.send(message)
 
     def send_payload(self, deviceid, data):
         while time.time() - self._last_ts < 0.1:
@@ -112,17 +137,17 @@ class StateManager(threading.Thread):
                     self._token = self._ewelink_cloud.token
                     self._apikey = self._ewelink_cloud.apikey
                 else:
-                    _LOGGER.debug("could not login to eWeLink cloud, retry after 30 seconds")
+                    _LOGGER.warning("Could not login to eWeLink cloud, retry after 30 seconds")
                     time.sleep(30)
-
-            self._ws = websocket.WebSocketApp(self._url,
-                                              on_open=self.on_open, on_message=self.on_message)
+            with self._lock:
+                self._ws = websocket.WebSocketApp(self._url, on_open=on_open, on_message=on_message)
             self._ws.keep_running = True
             threading.Thread(target=self._ws.run_forever(ping_interval=145, ping_timeout=5))
-            _LOGGER.debug("websocket disconnected, retrying")
-            self._ws.close()
-            self._ws = None
+            _LOGGER.warning("WebSocket disconnected, retrying")
             self._url = None
+            with self._lock:
+                self._ws.close()
+                self._ws = None
 
     def start_keep_alive(self):
         threading.Thread.start(self)

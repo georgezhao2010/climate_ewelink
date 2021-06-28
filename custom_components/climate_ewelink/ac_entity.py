@@ -10,7 +10,6 @@ from homeassistant.const import (
 import logging
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 AC_ENTITIES = {
     "climate": {

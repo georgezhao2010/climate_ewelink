@@ -22,7 +22,6 @@ from .ac_entity import AirConditionerEntity
 
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
