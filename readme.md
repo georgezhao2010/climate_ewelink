@@ -8,9 +8,16 @@ The custom component of Home Assistant, allows you to control Midea AC devices v
 
 Download the eWeLink App from App Store (iOS) or Google Play (Android), and register a eWeLink account, if you don't already have one.
 
+# Important point about eWeLink account
+
+Compoent may not work with another same ewelink account at the same time (example eWeLink App and Home Assistant or two Home Assistant copies). 
+So you need another account, one binds the Midea account and shares devices with the other. 
+One account used in HomeAssistant and different account used in eWeLink App (or deffrent Home Assistant copy).
+
 # Installtion
 
-Use HACS and Install as a custom repository.
+Use HACS and Install as a custom repository, or copy all files in `custom_components/cliamte_ewelink` from [Latest Release](https://github.com/georgezhao2010/climate_ewelink/releases/latest) to your `<Home Assistant config folder>/custom_components/cliamte_ewelink` in Home Assistant manually.
+Restart HomeAssistant.
 
 # Configuration
 
