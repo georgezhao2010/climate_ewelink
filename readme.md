@@ -12,7 +12,7 @@ Download the eWeLink App from App Store (iOS) or Google Play (Android), and regi
 
 Compoent may not work with another same ewelink account at the same time (example eWeLink App and Home Assistant or two Home Assistant copies). 
 So you need another account, one binds the Midea account and shares devices with the other. 
-One account used in HomeAssistant and different account used in eWeLink App (or deffrent Home Assistant copy).
+One account used in Home Assistant and different account used in eWeLink App (or deffrent Home Assistant copy).
 
 # Installtion
 
