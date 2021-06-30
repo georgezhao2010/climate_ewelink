@@ -2,7 +2,7 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 
-English | [简体中文](https://github.com/georgezhao2010/climate_ewelink/blob/main/README_hans.md)
+English | [简体中文](https://github.com/georgezhao2010/climate_ewelink/blob/main/readme_hans.md)
 
 The custom component of Home Assistant, allows you to control Midea AC devices via the eWeLink cloud.
 
