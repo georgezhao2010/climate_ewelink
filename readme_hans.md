@@ -2,7 +2,7 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 
-[English](https://github.com/georgezhao2010/climate_ewelink/blob/main/README.md) | 简体中文
+[English](https://github.com/georgezhao2010/climate_ewelink/blob/main/readme.md) | 简体中文
 
 Home Assistant的自定义集成组件, 允许你通过易微联云控制你的美的空调.
 
