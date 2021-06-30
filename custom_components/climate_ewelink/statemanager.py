@@ -18,7 +18,7 @@ _STATE_MANAGER = None
 
 
 def on_open(ws):
-    _LOGGER.warning(f"WebSocket connection established, send userOnline")
+    _LOGGER.debug(f"WebSocket connection established, send userOnline")
     _STATE_MANAGER.send_user_online()
 
 
@@ -137,7 +137,7 @@ class StateManager(threading.Thread):
                     self._token = self._ewelink_cloud.token
                     self._apikey = self._ewelink_cloud.apikey
                 else:
-                    _LOGGER.warning("Could not login to eWeLink cloud, retry after 30 seconds")
+                    _LOGGER.error("Could not login to eWeLink cloud, retry after 30 seconds")
                     time.sleep(30)
             with self._lock:
                 self._ws = websocket.WebSocketApp(self._url, on_open=on_open, on_message=on_message)
