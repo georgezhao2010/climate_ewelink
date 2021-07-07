@@ -1,5 +1,5 @@
 {
     "name": "Midea A/C via eWeLink",
-    "domains": ["tts"],
+    "domains": ["climate", "sensor", "switch"],
     "render_readme": true
 }
