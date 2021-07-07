@@ -1,5 +1,5 @@
 {
-    "name": "Azure Cognitive Speech Component",
+    "name": "Midea A/C via eWeLink",
     "domains": ["tts"],
     "render_readme": true
 }
