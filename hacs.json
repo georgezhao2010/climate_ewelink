@@ -1,5 +1,5 @@
 {
-    "name": "Midea A/C via eWeLink",
-    "domains": ["climate", "sensor", "switch"],
+    "name": "Azure Cognitive Speech Component",
+    "domains": ["tts"],
     "render_readme": true
 }
