@@ -2,6 +2,7 @@ DOMAIN = "climate_ewelink"
 
 STATES_MANAGER = "state_manager"
 CLIMATE_DEVICES = "climate_devices"
+ACCOUNTS = "accounts"
 
 APPSECRET = "oKvCM06gvwkRbfetd6qWRrbC3rFrbIpV"
 APPID = "4s1FXKC9FaGfoqXhmXSJneb3qcm1gOak"

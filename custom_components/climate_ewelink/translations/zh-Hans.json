@@ -1,7 +1,8 @@
 {
     "config": {
         "error": {
-            "cant_login": "无法登录，请验证用户名密码"
+            "cant_login": "无法登录，请验证用户名密码",
+            "account_exist": "该用户名已经配置过，请用其它用户名进行配置"
         },
         "step": {
             "user": {

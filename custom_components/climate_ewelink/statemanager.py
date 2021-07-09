@@ -38,6 +38,7 @@ class StateManager(threading.Thread):
         self._apikey = None
         self._last_ts = 0
         self._device_updates = {}
+        self._keep = True
         global _STATE_MANAGER
         _STATE_MANAGER = self
 
@@ -129,8 +130,8 @@ class StateManager(threading.Thread):
             self.send_json(payload)
 
     def run(self):
-        while True:
-            while self._url is None:
+        while self._keep:
+            while self._url is None and self._keep:
                 if self._ewelink_cloud.login():
                     self._url = self._ewelink_cloud.get_ws_url()
                     self._devices = self._ewelink_cloud.get_devices()
@@ -139,10 +140,14 @@ class StateManager(threading.Thread):
                 else:
                     _LOGGER.error("Could not login to eWeLink cloud, retry after 30 seconds")
                     time.sleep(30)
+            if not self._keep:
+                return
             with self._lock:
                 self._ws = websocket.WebSocketApp(self._url, on_open=on_open, on_message=on_message)
             self._ws.keep_running = True
             threading.Thread(target=self._ws.run_forever(ping_interval=145, ping_timeout=5))
+            if not self._keep:
+                return
             _LOGGER.warning("WebSocket disconnected, retrying")
             self._url = None
             with self._lock:
@@ -150,7 +155,15 @@ class StateManager(threading.Thread):
                 self._ws = None
 
     def start_keep_alive(self):
+        self._keep = True
         threading.Thread.start(self)
+
+    def stop(self):
+        self._keep = False
+        self._url = None
+        with self._lock:
+            self._ws.close()
+            self._ws = None
 
     def add_update(self, deviceid, update):
         if deviceid not in self._device_updates:

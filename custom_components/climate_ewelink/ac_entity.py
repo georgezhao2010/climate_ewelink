@@ -65,7 +65,7 @@ class AirConditionerEntity(Entity):
         self._state_manager = states_manager
         self._device_id = deviceid
         self._state_key = state_key
-        self._state_manager.add_update(self._device_id, self.update)
+        self._state_manager.add_update(self._device_id, self.update_state)
         self._unique_id = f"{DOMAIN}.{deviceid}_{self._state_key}"
         self.entity_id = self._unique_id
         self._state = None
@@ -100,7 +100,7 @@ class AirConditionerEntity(Entity):
                 return True
         return False
 
-    def update(self, status):
+    def update_state(self, status):
         if self._update_state(status):
             self.schedule_update_ha_state()
 

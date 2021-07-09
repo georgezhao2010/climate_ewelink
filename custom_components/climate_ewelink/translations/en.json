@@ -1,7 +1,8 @@
 {
     "config": {
         "error": {
-            "cant_login": "Can't login, check username and password"
+            "cant_login": "Can't login, check username and password",
+            "account_exist": "Account is already configured, choice another one"
         },
         "step": {
             "user": {
