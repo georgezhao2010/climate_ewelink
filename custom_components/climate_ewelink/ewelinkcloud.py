@@ -7,8 +7,6 @@ import json
 import logging
 import requests
 
-from aiohttp import ClientSession
-
 _LOGGER = logging.getLogger(__name__)
 
 

@@ -2,16 +2,12 @@ import logging
 from homeassistant.components.climate import *
 from homeassistant.components.climate.const import *
 from homeassistant.const import (
-    PRECISION_HALVES,
     TEMP_CELSIUS,
     PRECISION_WHOLE,
     PRECISION_TENTHS,
-    ATTR_TEMPERATURE,
-    STATE_ON,
-    STATE_OFF
+    ATTR_TEMPERATURE
 )
 from .const import (
-    DOMAIN,
     TEMPERATURE_MIN,
     TEMPERATURE_MAX,
     STATES_MANAGER,

@@ -2,8 +2,6 @@ from .const import DOMAIN, MODE_OFFLINE
 from homeassistant.helpers.entity import Entity
 from homeassistant.const import (
     TEMP_CELSIUS,
-    STATE_ON,
-    STATE_OFF,
     DEVICE_CLASS_TEMPERATURE
 )
 
