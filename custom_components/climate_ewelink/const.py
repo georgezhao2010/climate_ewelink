@@ -4,6 +4,9 @@ STATES_MANAGER = "state_manager"
 CLIMATE_DEVICES = "climate_devices"
 ACCOUNTS = "accounts"
 
+FAN_VERY_LOW = "very low"
+FAN_VERY_HIGH = "very high"
+
 APPSECRET = "oKvCM06gvwkRbfetd6qWRrbC3rFrbIpV"
 APPID = "4s1FXKC9FaGfoqXhmXSJneb3qcm1gOak"
 

@@ -3,7 +3,6 @@ import time
 import websocket
 import json
 import logging
-
 from .const import APPID
 from .ewelinkcloud import EWeLinkCloud
 
@@ -12,18 +11,6 @@ _LOGGER = logging.getLogger(__name__)
 
 class WebsocketNotOnlineException(Exception):
     pass
-
-
-_STATE_MANAGER = None
-
-
-def on_open(ws):
-    _LOGGER.debug(f"WebSocket connection established, send userOnline")
-    _STATE_MANAGER.send_user_online()
-
-
-def on_message(ws, message):
-    _STATE_MANAGER.process_message(message)
 
 
 class StateManager(threading.Thread):
@@ -39,8 +26,6 @@ class StateManager(threading.Thread):
         self._last_ts = 0
         self._device_updates = {}
         self._keep = True
-        global _STATE_MANAGER
-        _STATE_MANAGER = self
 
     @property
     def token(self):
@@ -130,6 +115,15 @@ class StateManager(threading.Thread):
             self.send_json(payload)
 
     def run(self):
+        state_manager = self
+
+        def on_open(ws):
+            _LOGGER.debug(f"WebSocket connection established, send userOnline")
+            state_manager.send_user_online()
+
+        def on_message(ws, message):
+            state_manager.process_message(message)
+
         while self._keep:
             while self._url is None and self._keep:
                 if self._ewelink_cloud.login():

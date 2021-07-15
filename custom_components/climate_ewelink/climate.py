@@ -12,7 +12,9 @@ from .const import (
     TEMPERATURE_MAX,
     STATES_MANAGER,
     CLIMATE_DEVICES,
-    MODE_OFFLINE
+    MODE_OFFLINE,
+    FAN_VERY_LOW,
+    FAN_VERY_HIGH
 )
 from .ac_entity import AirConditionerEntity
 
@@ -60,7 +62,7 @@ class EWeLinkClimate(AirConditionerEntity, ClimateEntity):
 
     @property
     def fan_modes(self):
-        return [FAN_LOW, FAN_MEDIUM, FAN_HIGH, FAN_AUTO]
+        return [FAN_VERY_LOW, FAN_LOW, FAN_MEDIUM, FAN_HIGH, FAN_VERY_HIGH, FAN_AUTO]
 
     @property
     def swing_mode(self):
@@ -122,12 +124,16 @@ class EWeLinkClimate(AirConditionerEntity, ClimateEntity):
             self._attr_fan_speed = data['wind_speed']
             if self._attr_fan_speed > 100:
                 self._attr_fan_mode = FAN_AUTO
-            elif self._attr_fan_speed > 70:
+            elif self._attr_fan_speed > 80:
+                self._attr_fan_mode = FAN_VERY_HIGH
+            elif self._attr_fan_speed > 60:
                 self._attr_fan_mode = FAN_HIGH
-            elif self._attr_fan_speed > 30:
+            elif self._attr_fan_speed > 40:
                 self._attr_fan_mode = FAN_MEDIUM
-            else:
+            elif self._attr_fan_speed > 20:
                 self._attr_fan_mode = FAN_LOW
+            else:
+                self._attr_fan_mode = FAN_VERY_LOW
             result = True
         if "temperature" in data:
             self._attr_target_temperature = data["temperature"]
@@ -145,12 +151,16 @@ class EWeLinkClimate(AirConditionerEntity, ClimateEntity):
     def set_fan_mode(self, fan_mode: str) -> None:
         if self.state != MODE_OFFLINE:
             wind_speed = 102
-            if fan_mode == FAN_LOW:
-                wind_speed = 29
+            if fan_mode == FAN_VERY_LOW:
+                wind_speed = 15
+            elif fan_mode == FAN_LOW:
+                wind_speed = 35
             elif fan_mode == FAN_MEDIUM:
-                wind_speed = 69
+                wind_speed = 55
             elif fan_mode == FAN_HIGH:
-                wind_speed = 99
+                wind_speed = 75
+            elif fan_mode == FAN_VERY_HIGH:
+                wind_speed = 95
             self._state_manager.send_payload(self._device_id, {"power": "on","wind_speed": wind_speed})
 
     def set_hvac_mode(self, hvac_mode: str) -> None:
