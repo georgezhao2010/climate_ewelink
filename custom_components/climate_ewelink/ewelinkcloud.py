@@ -56,14 +56,18 @@ class EWeLinkCloud:
                            json.dumps(payload).encode(),
                            digestmod=hashlib.sha256).digest()
         auth = "Sign " + base64.b64encode(hex_dig).decode()
-        r = requests.post(f"https://{SERVERS[self._country]}/api/user/login", json=payload,
-                          headers={'Authorization': auth})
-        if r.status_code == 200:
-            rejson = r.json()
-            if "at" in rejson and "user" in rejson and "apikey" in rejson["user"]:
-                self._apikey = rejson["user"]["apikey"]
-                self._token = rejson["at"]
-                return True
+        try:
+            r = requests.post(f"https://{SERVERS[self._country]}/api/user/login", json=payload,
+                              headers={'Authorization': auth})
+            if r.status_code == 200:
+                rejson = r.json()
+                if "at" in rejson and "user" in rejson and "apikey" in rejson["user"]:
+                    self._apikey = rejson["user"]["apikey"]
+                    self._token = rejson["at"]
+                    return True
+        except Exception as e:
+            _LOGGER.debug("Network error in login")
+            pass
         return False
 
     def get_devices(self):
@@ -71,29 +75,35 @@ class EWeLinkCloud:
         payload = update_payload(payload)
         auth = "Bearer " + self._token
         devices: EWeLinkDevice[dict] = {}
-        r = requests.get(f"https://{SERVERS[self._country]}/api/user/device", params=payload,
-                         headers={'Authorization': auth})
-        if r.status_code == 200:
-            rejson = r.json()
+        try:
+            r = requests.get(f"https://{SERVERS[self._country]}/api/user/device", params=payload,
+                             headers={'Authorization': auth})
+            if r.status_code == 200:
+                rejson = r.json()
 
-            for index in range(len(rejson['devicelist'])):
-                if rejson['devicelist'][index]['uiid'] in SUPPORTED_CLIMATES:
-                    devices[rejson['devicelist'][index]['deviceid']] = EWeLinkDevice(
-                        rejson['devicelist'][index]['deviceid'],
-                        rejson['devicelist'][index])
-                else:
-                    _LOGGER.debug(f"Unsupported device: {rejson['devicelist'][index]}")
+                for index in range(len(rejson['devicelist'])):
+                    if rejson['devicelist'][index]['uiid'] in SUPPORTED_CLIMATES:
+                        devices[rejson['devicelist'][index]['deviceid']] = EWeLinkDevice(
+                            rejson['devicelist'][index]['deviceid'],
+                            rejson['devicelist'][index])
+                    else:
+                        _LOGGER.debug(f"Unsupported device: {rejson['devicelist'][index]}")
+        except Exception as e:
+            _LOGGER.debug("Network error in get devices")
         return devices;
 
     def get_ws_url(self):
         payload = {'accept': 'ws'}
         payload = update_payload(payload)
         auth = "Bearer " + self._token
-        r = requests.get(f"https://{SERVERS[self._country]}/dispatch/app", params=payload,
-                         headers={'Authorization': auth})
-        if r.status_code == 200:
-            rejson = r.json()
-            return f"wss://{rejson['domain']}:{rejson['port']}/api/ws"
+        try:
+            r = requests.get(f"https://{SERVERS[self._country]}/dispatch/app", params=payload,
+                             headers={'Authorization': auth})
+            if r.status_code == 200:
+                rejson = r.json()
+                return f"wss://{rejson['domain']}:{rejson['port']}/api/ws"
+        except Exception as e:
+            _LOGGER.debug("Network error in get ws url")
         return None
 
     @property
