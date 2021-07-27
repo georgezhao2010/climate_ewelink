@@ -75,6 +75,7 @@ class StateManager(threading.Thread):
             elif "action" in data and data["action"] == "update" or data["action"] == "sysmsg" \
                     and "deviceid" in data and "params" in data:
                 self.update_device(data["deviceid"], data["params"])
+                self.send_query(data["deviceid"])
 
     def send_query(self, deviceid):
         self.send_payload(deviceid, {"_query": 1})
