@@ -1,0 +1,19 @@
+{
+    "config": {
+        "error": {
+            "cant_login": "No puedo iniciar sesión, verifique el nombre de usuario y la contraseña",
+            "account_exist": "Account is already configured, choice another one"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "username": "Nombre de usuario",
+                    "password": "Contraseña",
+                    "country": "País"
+
+                },
+                "title": "Configurar con la cuenta eWeLink"
+            }
+        }
+    }
+}
