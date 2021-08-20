@@ -1,0 +1,19 @@
+{
+    "config": {
+        "error": {
+            "cant_login": "Can not login, check username or password",
+            "account_exist": "Username already configured, choice another one"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "username": "Username",
+                    "password": "Password",
+                    "country": "Country"
+
+                },
+                "title": "Logon with eWeLink accout"
+            }
+        }
+    }
+}
