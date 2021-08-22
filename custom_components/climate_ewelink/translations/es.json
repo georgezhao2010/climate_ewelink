@@ -2,7 +2,7 @@
     "config": {
         "error": {
             "cant_login": "No puedo iniciar sesión, verifique el nombre de usuario y la contraseña",
-            "account_exist": "Account is already configured, choice another one"
+            "account_exist": "La cuenta ya está configurada, elija otra"
         },
         "step": {
             "user": {
