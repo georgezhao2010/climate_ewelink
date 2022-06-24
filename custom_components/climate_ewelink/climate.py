@@ -145,8 +145,19 @@ class EWeLinkClimate(AirConditionerEntity, ClimateEntity):
 
     def set_temperature(self, **kwargs) -> None:
         if self.state != MODE_OFFLINE:
-            temperature = int(kwargs[ATTR_TEMPERATURE])
-            self._state_manager.send_payload(self._device_id, {"temperature": temperature})
+            data = {}
+            temperature = kwargs.get(ATTR_TEMPERATURE)
+            if temperature:
+                data["temperature"] = int(temperature)
+            hvac_mode = kwargs.get(ATTR_HVAC_MODE)
+            if hvac_mode:
+                mode_key = "mode"
+                if hvac_mode == HVAC_MODE_OFF:
+                    mode_key = "power"
+                elif hvac_mode == HVAC_MODE_FAN_ONLY:
+                    hvac_mode = "fan"
+                data[mode_key] = hvac_mode
+            self._state_manager.send_payload(self._device_id, data)
 
     def set_fan_mode(self, fan_mode: str) -> None:
         if self.state != MODE_OFFLINE:
