@@ -1,6 +1,6 @@
 # Midea Air Conditioner via eWeLink Cloud
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-blue.svg)](https://github.com/custom-components/hacs)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 [![Stable](https://img.shields.io/github/v/release/georgezhao2010/climate_ewelink)](https://github.com/georgezhao2010/climate_ewelink/releases/latest)
 
 [English](https://github.com/georgezhao2010/climate_ewelink/blob/main/readme.md) | 简体中文
