@@ -19,7 +19,7 @@ One account used in Home Assistant and different account used in eWeLink App (or
 
 # Installtion
 
-Use HACS and Install as a custom repository, or copy all files in `custom_components/cliamte_ewelink` from [Latest Release](https://github.com/georgezhao2010/climate_ewelink/releases/latest) to your `<Home Assistant config folder>/custom_components/cliamte_ewelink` in Home Assistant manually.
+Install using HACS, or copy all files in `custom_components/cliamte_ewelink` from [Latest Release](https://github.com/georgezhao2010/climate_ewelink/releases/latest) to your `<Home Assistant config folder>/custom_components/cliamte_ewelink` in Home Assistant manually.
 Restart HomeAssistant.
 
 # Configuration
