@@ -18,7 +18,7 @@ Home Assistant的自定义集成组件, 允许你通过易微联云控制你的�
 
 # 安装
 
-在HACS中搜索Climate eWelink进行安装, 或者将位于[Latest Release](https://github.com/georgezhao2010/climate_ewelink/releases/latest)中的`custom_components/cliamte_ewelink`下所有文件手动复制到你的Home Assistant下的`<Home Assistant config folder>/custom_components/cliamte_ewelink`目录中，然后重启Home Assistant。
+在HACS中搜索'Midea A/C via eWeLink'进行安装, 或者将位于[Latest Release](https://github.com/georgezhao2010/climate_ewelink/releases/latest)中的`custom_components/cliamte_ewelink`下所有文件手动复制到你的Home Assistant下的`<Home Assistant config folder>/custom_components/cliamte_ewelink`目录中，然后重启Home Assistant。
 
 # 配置
 
