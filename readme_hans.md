@@ -7,6 +7,10 @@
 
 Home Assistant的自定义集成组件, 允许你通过易微联云控制你的美的空调.
 
+# 提示
+
+现在有了新的集成 [Midea AC LAN](https://github.com/georgezhao2010/midea_ac_lan) 允许你通过本地局域网而不是云来控制你的空调。
+
 # 使用之前
 
 如果你没有易微联账户，先下载易微联(eWeLink)App，注册一个账户，并在其中绑定你的美的美居账户。
