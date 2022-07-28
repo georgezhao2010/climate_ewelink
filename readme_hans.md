@@ -20,6 +20,8 @@ Home Assistant的自定义集成组件, 允许你通过易微联云控制你的�
 由于易微联的账户存在单点登录检测，因此组件也许不能与同一账户的其它方式登录（易微联App或另一个HomeAssistant）同时正常工作。
 所以你可能要准备至少第二个账户，其中一个在易微联App中绑定美的账号，然后分享给另一个。然后两个账户一个用来登录HomeAssistant，另一个用来登录易微联App。
 
+如果你的易微联账户是11位手机号码, 记得在之前加上"+86", 才是完整的易微联用户名。
+
 # 安装
 
 在HACS中搜索'Midea A/C via eWeLink'进行安装, 或者将位于[Latest Release](https://github.com/georgezhao2010/climate_ewelink/releases/latest)中的`custom_components/cliamte_ewelink`下所有文件手动复制到你的Home Assistant下的`<Home Assistant config folder>/custom_components/cliamte_ewelink`目录中，然后重启Home Assistant。
