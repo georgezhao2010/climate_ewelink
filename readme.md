@@ -7,6 +7,10 @@ English | [简体中文](https://github.com/georgezhao2010/climate_ewelink/blob/
 
 The custom component of Home Assistant, allows you to control Midea AC devices via the eWeLink cloud.
 
+# Note
+
+A new intergration [Midea AC LAN](https://github.com/georgezhao2010/midea_ac_lan) lets you control your Midea AC via local area network, instead of cloud.
+
 # Before use
 
 Download the eWeLink App from App Store (iOS) or Google Play (Android), and register a eWeLink account, if you don't already have one.
