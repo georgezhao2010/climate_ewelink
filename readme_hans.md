@@ -9,7 +9,7 @@ Home Assistant的自定义集成组件, 允许你通过易微联云控制你的�
 
 # 提示
 
-现在有了新的集成 [Midea AC LAN](https://github.com/georgezhao2010/midea_ac_lan) 允许你通过本地局域网而不是云来控制你的空调。
+现在有了新的集成 [Midea AC LAN](https://github.com/georgezhao2010/midea_ac_lan) 允许你通过本地局域网而不是云来控制你的美的空调。
 
 # 使用之前
 
